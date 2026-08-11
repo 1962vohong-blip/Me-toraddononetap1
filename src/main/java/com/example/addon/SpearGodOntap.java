@@ -1,36 +1,54 @@
-package com.example.mod.mixin;
+package com.example.mod;
 
+import net.fabricmc.api.ModInitializer;
+import net.fabricmc.fabric.api.entity.event.v1.ServerLivingEntityEvents;
 import net.minecraft.entity.LivingEntity;
-import net.minecraft.entity.damage.DamageSource;
-import net.minecraft.entity.player.PlayerEntity;
-import org.spongepowered.asm.mixin.Mixin;
-import org.spongepowered.asm.mixin.injection.At;
-import org.spongepowered.asm.mixin.injection.Inject;
-import org.spongepowered.asm.mixin.injection.ModifyVariable;
-import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
+import net.minecraft.entity.projectile.PersistentProjectileEntity;
+import net.minecraft.item.Items;
+import net.minecraft.item.SwordItem;
+import net.minecraft.server.network.ServerPlayerEntity;
+import net.minecraft.sound.SoundCategory;
+import net.minecraft.sound.SoundEvents;
 
-@Mixin(LivingEntity.class)
-public class SpearCombatMixin {
+public class ExampleMod implements ModInitializer {
+    private static final float CUSTOM_SWORD_DAMAGE = 50.0f; // Sát thương Kiếm (1-100)
 
-    // Nâng lượng sát thương lên đúng 10,000 khi tấn công bằng Spear
-    @ModifyVariable(method = "damage", at = @At("HEAD"), argsOnly = true)
-    private float modifyDamageAmount(float amount, DamageSource source) {
-        if (source.getAttacker() instanceof PlayerEntity player) {
-            if (player.getMainHandStack().getName().getString().toLowerCase().contains("spear")) {
-                return 10000.0f;
+    @Override
+    public void onInitialize() {
+        ServerLivingEntityEvents.ALLOW_DAMAGE.register((entity, source, amount) -> {
+            // 1. Xử lý cận chiến (Kiếm, Chùy)
+            if (source.getAttacker() instanceof ServerPlayerEntity player) {
+                var mainHand = player.getMainHandStack();
+
+                if (mainHand.getItem() instanceof SwordItem) {
+                    amount = CUSTOM_SWORD_DAMAGE;
+                }
+
+                if (mainHand.isOf(Items.MACE)) {
+                    breakArmor(entity);
+                }
             }
-        }
-        return amount;
+
+            // 2. Xử lý tầm xa từ Cung (Bow Power Shot phá giáp)
+            if (source.getSource() instanceof PersistentProjectileEntity arrow) {
+                if (arrow.getOwner() instanceof ServerPlayerEntity) {
+                    breakArmor(entity);
+                }
+            }
+
+            return true;
+        });
     }
 
-    // Triệt tiêu vận tốc, giữ nguyên 1 chỗ không bị đẩy lùi khi vung Spear
-    @Inject(method = "damage", at = @At("HEAD"))
-    private void freezePlayerOnAttack(DamageSource source, float amount, CallbackInfoReturnable<Boolean> cir) {
-        if (source.getAttacker() instanceof PlayerEntity player) {
-            if (player.getMainHandStack().getName().getString().toLowerCase().contains("spear")) {
-                player.setVelocity(0, player.getVelocity().y, 0);
-                player.velocityModified = true;
+    private static void breakArmor(LivingEntity entity) {
+        for (var armorStack : entity.getArmorItems()) {
+            if (!armorStack.isEmpty()) {
+                armorStack.setDamage(armorStack.getMaxDamage());
             }
         }
+        entity.getWorld().playSound(
+            null, entity.getX(), entity.getY(), entity.getZ(),
+            SoundEvents.ENTITY_ITEM_BREAK, SoundCategory.PLAYERS, 1.0f, 0.5f
+        );
     }
 }
