@@ -13,7 +13,8 @@ import net.minecraft.entity.LivingEntity;
 import net.minecraft.item.Items;
 import net.minecraft.util.Hand;
 
-public class SpearGodModule extends Module {
+// TÊN CLASS PHẢI KHỚP VỚI TÊN FILE LÀ SpearGodOntap.java
+public class SpearGodOntap extends Module {
     private final SettingGroup sgGeneral = settings.getDefaultGroup();
 
     private final Setting<Double> range = sgGeneral.add(new DoubleSetting.Builder()
@@ -25,21 +26,20 @@ public class SpearGodModule extends Module {
         .build()
     );
 
-    public SpearGodModule() {
-        super(ExampleAddon.CATEGORY, "spear-god", "One-tap mục tiêu trong phạm vi 100 blocks với Spear.");
+    public SpearGodOntap() {
+        super(ExampleAddon.CATEGORY, "spear-god-ontap", "One-tap mục tiêu trong phạm vi 100 blocks với Spear.");
     }
 
     @EventHandler
     private void onTick(TickEvent.Pre event) {
         if (mc.player == null || mc.world == null) return;
 
-        // Kiểm tra xem người chơi có đang cầm vũ khí/Spear ở tay chính không
+        // Kiểm tra item, dùng tạm Wooden Sword để test, thay thế bằng Spear ID thực tế nếu có
         boolean holdingSpear = mc.player.getMainHandStack().getItem().toString().contains("spear") 
-            || mc.player.getMainHandStack().isOf(Items.WOODEN_SWORD); // Thay thế bằng item ID thực tế của Spear trong 1.21.11
+            || mc.player.getMainHandStack().isOf(Items.WOODEN_SWORD);
 
         if (!holdingSpear) return;
 
-        // Quét tìm entity sống trong bán kính 100 blocks
         Entity target = null;
         double minDst = range.get();
 
@@ -54,7 +54,6 @@ public class SpearGodModule extends Module {
             }
         }
 
-        // Tự động khóa mục tiêu và tấn công lập tức
         if (target != null) {
             Entity finalTarget = target;
             Rotations.rotate(Rotations.getYaw(target), Rotations.getPitch(target), 100, () -> {
