@@ -12,7 +12,6 @@ repositories {
 }
 
 dependencies {
-    // Sử dụng cú pháp khai báo trực tiếp để bỏ qua lỗi libs.versions.toml
     minecraft("com.mojang:minecraft:1.21.11")
     mappings("net.fabricmc:yarn:1.21.11+build.1:v2")
     
@@ -23,10 +22,4 @@ dependencies {
 
 java {
     toolchain.languageVersion.set(JavaLanguageVersion.of(21))
-}
-
-tasks.withType<org.gradle.jvm.tasks.Jar> {
-    from("LICENSE") {
-        rename { "${it}_${project.name}" }
-    }
 }
