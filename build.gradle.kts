@@ -1,5 +1,5 @@
 plugins {
-    id("net.fabricmc.fabric-loom-remap") version "1.14.3"
+    id("net.fabricmc.fabric-loom") version "1.14.3"
 }
 
 version = "1.0.0"
@@ -7,19 +7,8 @@ group = "com.example.mod"
 
 repositories {
     mavenCentral()
-    maven("https://maven.fabricmc.net/") {
-        content {
-            includeGroup("net.fabricmc")
-            includeGroup("net.fabricmc.fabric-api")
-            includeGroup("com.mojang")
-        }
-    }
-    // SỬA ĐỔI CHÍNH XÁC: Phải là .org
-    maven("https://maven.meteordev.org/") {
-        content {
-            includeGroup("meteordevelopment")
-        }
-    }
+    maven("https://maven.fabricmc.net/")
+    maven("https://maven.meteordev.org/") // Kho chính thức của Meteor/Spear
 }
 
 dependencies {
@@ -28,7 +17,7 @@ dependencies {
     
     "modImplementation"("net.fabricmc:fabric-loader:0.16.5")
     
-    // Sử dụng cú pháp module an toàn cho Fabric API
+    // Đảm bảo phiên bản Fabric API khớp với 1.21.11
     "modImplementation"("net.fabricmc.fabric-api:fabric-api:0.108.0+1.21.11")
     
     "modImplementation"("meteordevelopment:meteor-client:0.5.8")
