@@ -8,7 +8,6 @@ group = "com.example.mod"
 repositories {
     mavenCentral()
     maven("https://maven.fabricmc.net/")
-    maven("https://maven.meteordev.org/") // Kho chính thức của Meteor/Spear
 }
 
 dependencies {
@@ -16,11 +15,7 @@ dependencies {
     "mappings"("net.fabricmc:yarn:1.21.11+build.1:v2")
     
     "modImplementation"("net.fabricmc:fabric-loader:0.16.5")
-    
-    // Đảm bảo phiên bản Fabric API khớp với 1.21.11
     "modImplementation"("net.fabricmc.fabric-api:fabric-api:0.108.0+1.21.11")
-    
-    "modImplementation"("meteordevelopment:meteor-client:0.5.8")
 }
 
 java {
