@@ -1,30 +1,15 @@
-package com.example.addon.commands;
+package com.example.mod;
 
-import com.mojang.brigadier.CommandDispatcher;
-import net.fabricmc.fabric.api.command.v2.CommandRegistrationCallback;
-import net.minecraft.server.command.ServerCommandSource;
-import net.minecraft.text.Text;
+import net.fabricmc.api.ModInitializer;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
-import static net.minecraft.server.command.CommandManager.literal;
+public class ExampleMod implements ModInitializer {
+    public static final String MOD_ID = "metormod";
+    public static final Logger LOGGER = LoggerFactory.getLogger(MOD_ID);
 
-public class CommandExample {
-
-    public static void register() {
-        CommandRegistrationCallback.EVENT.register((dispatcher, registryAccess, environment) -> {
-            registerCommand(dispatcher);
-        });
-    }
-
-    private static void registerCommand(CommandDispatcher<ServerCommandSource> dispatcher) {
-        dispatcher.register(
-            literal("example")
-                .executes(context -> {
-                    context.getSource().sendFeedback(
-                        () -> Text.literal("Example command executed!"),
-                        false
-                    );
-                    return 1;
-                })
-        );
+    @Override
+    public void onInitialize() {
+        LOGGER.info("Mod độc lập đã khởi động thành công trên Minecraft 1.21.4!");
     }
 }
