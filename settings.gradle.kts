@@ -1,8 +1,9 @@
+rootProject.name = "Me-toraddononetap1"
+
 pluginManagement {
     repositories {
-        gradlePluginPortal()
         maven("https://maven.fabricmc.net/")
+        mavenCentral()
+        gradlePluginPortal()
     }
 }
-
-rootProject.name = "Me-toraddononetap1"
