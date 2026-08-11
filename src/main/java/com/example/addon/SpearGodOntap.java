@@ -1,87 +1,36 @@
-package com.example.addon;
+package com.example.mod.mixin;
 
-import javax.swing.*;
-import java.awt.*;
-import java.awt.event.KeyAdapter;
-import java.awt.event.KeyEvent;
+import net.minecraft.entity.LivingEntity;
+import net.minecraft.entity.damage.DamageSource;
+import net.minecraft.entity.player.PlayerEntity;
+import org.spongepowered.asm.mixin.Mixin;
+import org.spongepowered.asm.mixin.injection.At;
+import org.spongepowered.asm.mixin.injection.Inject;
+import org.spongepowered.asm.mixin.injection.ModifyVariable;
+import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
-public class SpearGodOntap extends JFrame {
-    private boolean isMenuVisible = false;
+@Mixin(LivingEntity.class)
+public class SpearCombatMixin {
 
-    public SpearGodOntap() {
-        setTitle("Spear God Menu - Independent");
-        setSize(350, 450);
-        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        setLocationRelativeTo(null);
-        setLayout(new BorderLayout());
-        setUndecorated(true);
-        setBackground(new Color(0, 0, 0, 150));
-
-        JLabel titleLabel = new JLabel("=== SPEAR GOD MENU ===", JLabel.CENTER);
-        titleLabel.setForeground(Color.CYAN);
-        titleLabel.setFont(new Font("Arial", Font.BOLD, 18));
-        titleLabel.setBorder(BorderFactory.createEmptyBorder(20, 0, 10, 0));
-        add(titleLabel, BorderLayout.NORTH);
-
-        JPanel contentPanel = new JPanel();
-        contentPanel.setLayout(new BoxLayout(contentPanel, BoxLayout.Y_AXIS));
-        contentPanel.setOpaque(false);
-        contentPanel.setBorder(BorderFactory.createEmptyBorder(10, 20, 20, 20));
-
-        JCheckBox spearToggle = new JCheckBox("Bật One Tap Spear");
-        spearToggle.setForeground(Color.WHITE);
-        spearToggle.setFont(new Font("Arial", Font.BOLD, 14));
-        spearToggle.setOpaque(false);
-
-        JLabel rangeLabel = new JLabel("• Tầm đánh: 20 Blocks");
-        rangeLabel.setForeground(Color.LIGHT_GRAY);
-        rangeLabel.setFont(new Font("Arial", Font.PLAIN, 12));
-
-        JLabel damageLabel = new JLabel("• Sát thương: 100 Dame");
-        damageLabel.setForeground(Color.LIGHT_GRAY);
-        damageLabel.setFont(new Font("Arial", Font.PLAIN, 12));
-
-        JButton exitBtn = new JButton("Thoát ứng dụng");
-        exitBtn.setAlignmentX(Component.CENTER_ALIGNMENT);
-        exitBtn.setBackground(new Color(220, 53, 69));
-        exitBtn.setForeground(Color.WHITE);
-        exitBtn.addActionListener(e -> System.exit(0));
-
-        contentPanel.add(spearToggle);
-        contentPanel.add(Box.createRigidArea(new Dimension(0, 10)));
-        contentPanel.add(rangeLabel);
-        contentPanel.add(Box.createRigidArea(new Dimension(5, 5)));
-        contentPanel.add(damageLabel);
-        contentPanel.add(Box.createRigidArea(new Dimension(0, 30)));
-        contentPanel.add(exitBtn);
-
-        add(contentPanel, BorderLayout.CENTER);
-
-        addKeyListener(new KeyAdapter() {
-            @Override
-            public void keyPressed(KeyEvent e) {
-                if (e.getKeyCode() == KeyEvent.VK_P) {
-                    isMenuVisible = !isMenuVisible;
-                    setVisible(isMenuVisible);
-                    if (isMenuVisible) {
-                        toFront();
-                        repaint();
-                    }
-                }
+    // Nâng lượng sát thương lên đúng 10,000 khi tấn công bằng Spear
+    @ModifyVariable(method = "damage", at = @At("HEAD"), argsOnly = true)
+    private float modifyDamageAmount(float amount, DamageSource source) {
+        if (source.getAttacker() instanceof PlayerEntity player) {
+            if (player.getMainHandStack().getName().getString().toLowerCase().contains("spear")) {
+                return 10000.0f;
             }
-        });
-        
-        setFocusable(true);
-        setFocusTraversalKeysEnabled(false);
+        }
+        return amount;
     }
 
-    public static void main(String[] args) {
-        SwingUtilities.invokeLater(() -> {
-            SpearGodOntap app = new SpearGodOntap();
-            app.setVisible(false);
-            JOptionPane.showMessageDialog(null, 
-                "Ứng dụng đã sẵn sàng!\nHãy bấm phím [ P ] trên bàn phím để bật/tắt Menu.", 
-                "Thông báo", JOptionPane.INFORMATION_MESSAGE);
-        });
+    // Triệt tiêu vận tốc, giữ nguyên 1 chỗ không bị đẩy lùi khi vung Spear
+    @Inject(method = "damage", at = @At("HEAD"))
+    private void freezePlayerOnAttack(DamageSource source, float amount, CallbackInfoReturnable<Boolean> cir) {
+        if (source.getAttacker() instanceof PlayerEntity player) {
+            if (player.getMainHandStack().getName().getString().toLowerCase().contains("spear")) {
+                player.setVelocity(0, player.getVelocity().y, 0);
+                player.velocityModified = true;
+            }
+        }
     }
 }
