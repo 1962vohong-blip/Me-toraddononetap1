@@ -1,9 +1,9 @@
 {
   "schema_version": 1,
-  "id": "metormod",
+  "id": "standalonemod",
   "version": "${version}",
-  "name": "Me-tor Addon One Tap",
-  "description": "Mod độc lập cho Minecraft 1.21.4",
+  "name": "Standalone Mod",
+  "description": "A clean Fabric mod",
   "authors": [
     "Me"
   ],
@@ -15,9 +15,7 @@
       "com.example.mod.ExampleMod"
     ]
   },
-  "mixins": [
-    "metormod.mixins.json"
-  ],
+  "mixins": [],
   "depends": {
     "fabricloader": ">=0.16.9",
     "minecraft": "~1.21.4",
