@@ -1,13 +1,12 @@
 {
-  "schema_version": 1,
-  "id": "standalonemod",
-  "version": "${version}",
-  "name": "Standalone Mod",
-  "description": "A clean Fabric mod",
+  "schemaVersion": 1,
+  "id": "my-mod",
+  "version": "1.0.0",
+  "name": "My Mod",
+  "description": "My mod description",
   "authors": [
     "Me"
   ],
-  "contact": {},
   "license": "MIT",
   "environment": "*",
   "entrypoints": {
@@ -15,11 +14,9 @@
       "com.example.mod.ExampleMod"
     ]
   },
-  "mixins": [],
   "depends": {
     "fabricloader": ">=0.16.9",
     "minecraft": "~1.21.4",
-    "java": ">=21",
     "fabric-api": "*"
   }
 }
