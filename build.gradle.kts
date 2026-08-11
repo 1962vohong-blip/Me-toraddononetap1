@@ -11,6 +11,11 @@ repositories {
     maven("https://maven.meteordev.com/")
 }
 
+// Chủ động khởi tạo configuration để Gradle 9 nhận diện ngay từ đầu
+configurations {
+    maybeCreate("mappings")
+}
+
 dependencies {
     "minecraft"("com.mojang:minecraft:1.21.11")
     "mappings"("net.fabricmc:yarn:1.21.11+build.1:v2")
