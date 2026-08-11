@@ -7,8 +7,18 @@ group = "com.example.mod"
 
 repositories {
     mavenCentral()
-    maven("https://maven.fabricmc.net/")
-    maven("https://maven.meteordev.com/")
+    maven("https://maven.fabricmc.net/") {
+        content {
+            includeGroup("net.fabricmc")
+            includeGroup("net.fabricmc.fabric-api")
+            includeGroup("com.mojang")
+        }
+    }
+    maven("https://maven.meteordev.com/") {
+        content {
+            includeGroup("meteordevelopment")
+        }
+    }
 }
 
 dependencies {
