@@ -12,23 +12,12 @@ repositories {
 }
 
 dependencies {
-    add("minecraft", "com.mojang:minecraft:1.21.11")
+    "minecraft"("com.mojang:minecraft:1.21.11")
+    "mappings"("net.fabricmc:yarn:1.21.11+build.1:v2")
     
-    add("modImplementation", "net.fabricmc:fabric-loader:0.16.5")
-    add("modImplementation", "net.fabricmc.fabric-api:fabric-api:0.108.0+1.21.11")
-    add("modImplementation", "meteordevelopment:meteor-client:0.5.8")
-}
-
-loom {
-    // Khai báo mappings chuẩn xác theo thiết kế của Loom
-    runs {
-        // Cấu hình chạy mặc định nếu cần
-    }
-}
-
-dependencies {
-    // Loom tự đăng ký cấu hình mappings khi block loom được khởi tạo
-    add("mappings", "net.fabricmc:yarn:1.21.11+build.1:v2")
+    "modImplementation"("net.fabricmc:fabric-loader:0.16.5")
+    "modImplementation"("net.fabricmc:fabric-api:fabric-api:0.108.0+1.21.11")
+    "modImplementation"("meteordevelopment:meteor-client:0.5.8")
 }
 
 java {
