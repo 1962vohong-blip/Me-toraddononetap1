@@ -1,12 +1,10 @@
 [versions]
 mod-version = "0.1.0"
-
 jdk = "21"
 minecraft = "1.21.11"
 fabric-loader = "0.16.5"
-loom = "1.7-SNAPSHOT"
-# Sử dụng phiên bản meteor-client cho 1.21.11 (hoặc bản thay thế gần nhất)
-meteor = "0.5.8" 
+loom = "1.7.1"
+meteor = "0.5.8"
 fabric-api = "0.108.0+1.21.11"
 
 [libraries]
