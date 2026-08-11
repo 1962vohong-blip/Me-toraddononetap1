@@ -1,5 +1,5 @@
 plugins {
-    id("net.fabricmc.fabric-loom") version "1.14.3"
+    alias(libs.plugins.fabric.loom)
 }
 
 version = "1.0.0"
@@ -13,7 +13,10 @@ repositories {
 
 dependencies {
     minecraft(libs.minecraft)
-    mappings("net.fabricmc:yarn:1.21.11+build.1:v2")
+    mappings(loom.layered {
+        officialMojangMappings()
+        yarn("net.fabricmc:yarn:1.21.11+build.1:v2")
+    })
     modImplementation(libs.fabric.loader)
     modImplementation(libs.fabric.api)
     modImplementation(libs.meteor.client)
