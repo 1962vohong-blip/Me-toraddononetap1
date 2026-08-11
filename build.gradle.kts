@@ -14,7 +14,8 @@ repositories {
             includeGroup("com.mojang")
         }
     }
-    maven("https://maven.meteordev.com/") {
+    // SỬA ĐỔI CHÍNH XÁC: Phải là .org
+    maven("https://maven.meteordev.org/") {
         content {
             includeGroup("meteordevelopment")
         }
@@ -22,12 +23,15 @@ repositories {
 }
 
 dependencies {
-    minecraft("com.mojang:minecraft:1.21.11")
-    mappings("net.fabricmc:yarn:1.21.11+build.1:v2")
+    "minecraft"("com.mojang:minecraft:1.21.11")
+    "mappings"("net.fabricmc:yarn:1.21.11+build.1:v2")
     
-    modImplementation("net.fabricmc:fabric-loader:0.16.5")
-    modImplementation("net.fabricmc:fabric-api:fabric-api:0.108.0+1.21.11")
-    modImplementation("meteordevelopment:meteor-client:0.5.8")
+    "modImplementation"("net.fabricmc:fabric-loader:0.16.5")
+    
+    // Sử dụng cú pháp module an toàn cho Fabric API
+    "modImplementation"("net.fabricmc.fabric-api:fabric-api:0.108.0+1.21.11")
+    
+    "modImplementation"("meteordevelopment:meteor-client:0.5.8")
 }
 
 java {
