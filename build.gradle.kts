@@ -1,5 +1,5 @@
 plugins {
-    id("net.fabricmc.fabric-loom") version "1.7-SNAPSHOT"
+    id("fabric-loom") version "1.7.4"
     `maven-publish`
 }
 
@@ -8,13 +8,14 @@ group = "com.example.mod"
 
 repositories {
     mavenCentral()
+    maven("https://maven.fabricmc.net/")
 }
 
 dependencies {
     minecraft("com.mojang:minecraft:1.21.4")
     mappings("net.fabricmc:yarn:1.21.4+build.8:v2")
     modImplementation("net.fabricmc:fabric-loader:0.16.9")
-    modImplementation("net.fabricmc:fabric-api:fabric-api:0.110.0+1.21.4")
+    modImplementation("net.fabricmc.fabric-api:fabric-api:0.110.0+1.21.4")
 }
 
 java {
