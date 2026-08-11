@@ -1,5 +1,4 @@
 package com.example.addon.modules;
-
 import com.example.addon.ExampleAddon;
 import meteordevelopment.meteorclient.events.world.TickEvent;
 import meteordevelopment.meteorclient.systems.modules.Module;
@@ -13,7 +12,6 @@ import net.minecraft.entity.LivingEntity;
 import net.minecraft.item.Items;
 import net.minecraft.util.Hand;
 
-// TÊN CLASS PHẢI KHỚP VỚI TÊN FILE LÀ SpearGodOntap.java
 public class SpearGodOntap extends Module {
     private final SettingGroup sgGeneral = settings.getDefaultGroup();
 
@@ -34,7 +32,6 @@ public class SpearGodOntap extends Module {
     private void onTick(TickEvent.Pre event) {
         if (mc.player == null || mc.world == null) return;
 
-        // Kiểm tra item, dùng tạm Wooden Sword để test, thay thế bằng Spear ID thực tế nếu có
         boolean holdingSpear = mc.player.getMainHandStack().getItem().toString().contains("spear") 
             || mc.player.getMainHandStack().isOf(Items.WOODEN_SWORD);
 
