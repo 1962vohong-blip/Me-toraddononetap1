@@ -15,11 +15,13 @@ dependencies {
     minecraft("com.mojang:minecraft:1.21.4")
     mappings("net.fabricmc:yarn:1.21.4+build.8:v2")
     modImplementation("net.fabricmc:fabric-loader:0.16.9")
-    
-    // Dùng cú pháp chuỗi tiêu chuẩn cho fabric-api
     modImplementation("net.fabricmc.fabric-api:fabric-api:0.110.0+1.21.4")
 }
 
 java {
     toolchain.languageVersion.set(JavaLanguageVersion.of(21))
+}
+
+tasks.withType<JavaCompile>().configureEach {
+    options.compilerArgs.add("--enable-preview")
 }
