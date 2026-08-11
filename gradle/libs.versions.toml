@@ -1,13 +1,8 @@
 [versions]
 mod-version = "0.1.0"
 
-# Fabric & Minecraft 1.21.11
 jdk = "21"
-minecraft = "1.21.11"
+minecraft = "1.21.4"
 fabric-loader = "0.16.5"
-
-# Loom
 loom = "1.7-SNAPSHOT"
-
-# Meteor Client cho phiên bản 1.21.11
 meteor = "0.5.8"
