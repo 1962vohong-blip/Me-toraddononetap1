@@ -16,3 +16,8 @@ jobs:
         uses: gradle/actions/setup-gradle@v3
       - name: Run build
         run: ./gradlew build
+- name: Upload Artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: my-mod-jar
+          path: build/libs/*.jar
