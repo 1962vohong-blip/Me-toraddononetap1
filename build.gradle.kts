@@ -1,5 +1,5 @@
 plugins {
-    alias(libs.plugins.fabric.loom)
+    id("net.fabricmc.fabric-loom") version "1.14.3"
 }
 
 version = "1.0.0"
@@ -8,6 +8,7 @@ group = "com.example.mod"
 repositories {
     mavenCentral()
     maven("https://maven.meteordev.com/")
+    maven("https://maven.fabricmc.net/")
 }
 
 dependencies {
