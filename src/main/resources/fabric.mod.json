@@ -1,18 +1,26 @@
-{
+
   "schemaVersion": 1,
-  "id": "autocart",
-  "version": "1.0.0",
-  "name": "Auto Cart Totem",
+  "id": "doomclient",
+  "version": "${version}",
+  "name": "DoomClient Hack Mod",
+  "description": "Full hack client for Minecraft 1.21.4 - KillAura, XRay, Fly, Speed, ESP, ChestESP, Scaffold, MLSAC Bypass, Fast Pro Bypass",
+  "authors": ["PhTuanKhanh"],
+  "contact": {
+    "discord": "discord.gg/ptkontop"
+  },
+  "license": "MIT",
+  "icon": "assets/doomclient/icon.png",
+  "environment": "client",
   "entrypoints": {
-    "main": [
-      "com.tenban.autocart.AutoCartMod"
-    ]
+    "client": ["com.doomclient.DoomClientMod"]
   },
   "mixins": [
-    "autocart.mixins.json"
+    "doomclient.mixins.json"
   ],
   "depends": {
-    "fabricloader": ">=0.16.5",
-    "minecraft": "~1.21.4"
+    "fabricloader": ">=0.16.10",
+    "minecraft": ">=1.21.4",
+    "fabric-api": ">=0.106.0",
+    "java": ">=21"
   }
 }
