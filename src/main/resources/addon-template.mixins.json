@@ -1,9 +1,9 @@
 {
   "required": true,
-  "package": "com.example.addon.mixin",
+  "package": "com.tenban.autocart.mixin",
   "compatibilityLevel": "JAVA_21",
-  "client": [
-    "ExampleMixin"
+  "mixins": [
+    "LivingEntityMixin"
   ],
   "injectors": {
     "defaultRequire": 1
