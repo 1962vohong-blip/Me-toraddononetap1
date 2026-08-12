@@ -1,28 +1,92 @@
-name: Build Mod
+name: Build DoomClient 1.21.x+
 
-on: [push, pull_request]
+on:
+  push:
+    branches: [ main, master ]
+    paths:
+      - 'src/**'
+      - 'build.gradle'
+      - 'gradle.properties'
+      - '.github/workflows/build.yml'
+  pull_request:
+    branches: [ main, master ]
+  workflow_dispatch:
+    inputs:
+      mc_version:
+        description: 'Minecraft Version'
+        required: true
+        default: '1.21.4'
+        type: choice
+        options:
+          - '1.21.4'
+          - '1.21.3'
+          - '1.21.2'
+          - '1.21.1'
+          - '1.21'
 
 jobs:
   build:
     runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      actions: read
+    
     steps:
-      - name: Checkout source
+      - name: Checkout repository
         uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
 
-      - name: Set up JDK 21
+      - name: Setup Java JDK 21
         uses: actions/setup-java@v4
         with:
           java-version: '21'
           distribution: 'temurin'
+          cache: 'gradle'
 
       - name: Validate Gradle wrapper
+        uses: gradle/wrapper-validation-action@v2
+
+      - name: Setup Gradle
         uses: gradle/actions/setup-gradle@v3
+        with:
+          gradle-version: '8.11.1'
 
-      - name: Build with Gradle
-        run: ./gradlew build
+      - name: Build DoomClient Mod
+        run: |
+          chmod +x ./gradlew
+          ./gradlew build --no-daemon
 
-      - name: Upload Artifact
+      - name: Upload DoomClient JAR
         uses: actions/upload-artifact@v4
         with:
-          name: my-mod-jar
+          name: DoomClient-${{ github.sha }}
           path: build/libs/*.jar
+          retention-days: 30
+          compression-level: 9
+
+      - name: Create Release
+        if: startsWith(github.ref, 'refs/tags/')
+        uses: softprops/action-gh-release@v1
+        with:
+          name: DoomClient ${{ github.ref_name }}
+          body: |
+            ## DoomClient Hack Mod v3.5.0
+            
+            ### Features:
+            - KillAura, AutoTotem, Criticals, Velocity, Reach, SpearDamage, MaceDamage
+            - XRay, ESP, ChestESP, Tracers, FullBright
+            - Fly, Speed, AutoSprint, Step, NoFall, Jesus, NoClip
+            - Scaffold, Timer, FastBreak
+            - MLSACBypass (+20%), MLSACFastProBypass, ACBypass
+            
+            ### Requirements:
+            - Minecraft 1.21.4
+            - Fabric Loader 0.16.10+
+            - Fabric API 0.106.0+
+            - Java 21
+          files: build/libs/*.jar
+          draft: false
+          prerelease: false
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
