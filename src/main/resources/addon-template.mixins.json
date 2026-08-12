@@ -1,9 +1,17 @@
-{
   "required": true,
-  "package": "com.tenban.autocart.mixin",
+  "package": "com.doomclient.mixin",
   "compatibilityLevel": "JAVA_21",
-  "mixins": [
-    "LivingEntityMixin"
+  "client": [
+    "MixinMinecraftClient",
+    "MixinPlayerEntity",
+    "MixinRenderLayer",
+    "MixinBlockRender",
+    "MixinGameRenderer",
+    "MixinEntityRenderer",
+    "MixinClientPlayerEntity",
+    "MixinKeyboardInput",
+    "MixinWorldRenderer",
+    "MixinClientConnection"
   ],
   "injectors": {
     "defaultRequire": 1
