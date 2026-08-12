@@ -1,22 +1,18 @@
 {
   "schemaVersion": 1,
-  "id": "my-mod",
+  "id": "autocart",
   "version": "1.0.0",
-  "name": "My Mod",
-  "description": "My mod description",
-  "authors": [
-    "Me"
-  ],
-  "license": "MIT",
-  "environment": "*",
+  "name": "Auto Cart Totem",
   "entrypoints": {
     "main": [
-      "com.example.mod.ExampleMod"
+      "com.tenban.autocart.AutoCartMod"
     ]
   },
+  "mixins": [
+    "tên_mod.mixins.json"
+  ],
   "depends": {
-    "fabricloader": ">=0.16.9",
-    "minecraft": "~1.21.4",
-    "fabric-api": "*"
+    "fabricloader": ">=0.16.5",
+    "minecraft": "~1.21.4"
   }
 }
