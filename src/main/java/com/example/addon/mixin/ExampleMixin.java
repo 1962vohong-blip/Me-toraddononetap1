@@ -1,31 +1,31 @@
-package com.example.addon.mixin;
+package com.tenban.autocart.mixin;
 
-import com.example.addon.AddonTemplate;
-import net.minecraft.client.Minecraft;
-import net.minecraft.client.main.GameConfig;
+import com.tenban.autocart.AutoCartMod;
+import net.minecraft.entity.LivingEntity;
+import net.minecraft.entity.damage.DamageSource;
+import net.minecraft.server.network.ServerPlayerEntity;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
-import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
+import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
-/**
- * Example Mixin class.
- * For more resources, visit:
- * <ul>
- * <li><a href="https://fabricmc.net/wiki/tutorial:mixin_introduction">The FabricMC wiki</a></li>
- * <li><a href="https://github.com/SpongePowered/Mixin/wiki">The Mixin wiki</a></li>
- * <li><a href="https://github.com/LlamaLad7/MixinExtras/wiki">The MixinExtras wiki</a></li>
- * <li><a href="https://jenkins.liteloader.com/view/Other/job/Mixin/javadoc/allclasses-noframe.html">The Mixin javadoc</a></li>
- * <li><a href="https://github.com/2xsaiko/mixin-cheatsheet">The Mixin cheatsheet</a></li>
- * </ul>
- */
-@Mixin(Minecraft.class)
-public abstract class ExampleMixin {
-    /**
-     * Example Mixin injection targeting the {@code <init>} method (the constructor) at {@code TAIL} (end of method).
-     */
-    @Inject(method = "<init>", at = @At("TAIL"))
-    private void onGameLoaded(GameConfig gameConfig, CallbackInfo ci) {
-        AddonTemplate.LOG.info("Hello from ExampleMixin!");
+@Mixin(LivingEntity.class)
+public abstract class LivingEntityMixin {
+    
+    // Tiêm code vào hàm tryUseTotem của Minecraft
+    @Inject(method = "tryUseTotem", at = @At("RETURN"))
+    private void onTotemPop(DamageSource source, CallbackInfoReturnable<Boolean> cir) {
+        // Nếu trả về true (nghĩa là Totem đã kích hoạt cứu mạng thành công)
+        if (cir.getReturnValue()) {
+            LivingEntity entity = (LivingEntity) (Object) this;
+            
+            // Kiểm tra xem người vừa nổ totem có phải là người chơi không
+            if (entity instanceof ServerPlayerEntity player) {
+                
+                // --- ĐẶT DÒNG CODE ĐÓ NGAY TẠI ĐÂY ---
+                AutoCartMod.tasks.add(new AutoCartMod.CartComboTask(player));
+                
+            }
+        }
     }
 }
