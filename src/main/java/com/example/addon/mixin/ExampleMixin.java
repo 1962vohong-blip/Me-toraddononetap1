@@ -1,31 +1,81 @@
-package com.tenban.autocart.mixin;
+// src/main/java/com/example/customweapon/command/WeaponCommand.java
+// Command handler for /weapon command
 
-import com.tenban.autocart.AutoCartMod;
-import net.minecraft.entity.LivingEntity;
-import net.minecraft.entity.damage.DamageSource;
-import net.minecraft.server.network.ServerPlayerEntity;
-import org.spongepowered.asm.mixin.Mixin;
-import org.spongepowered.asm.mixin.injection.At;
-import org.spongepowered.asm.mixin.injection.Inject;
-import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
+package com.example.customweapon.command;
 
-@Mixin(LivingEntity.class)
-public abstract class LivingEntityMixin {
+import com.example.customweapon.CustomWeaponMod;
+import com.mojang.brigadier.CommandDispatcher;
+import com.mojang.brigadier.arguments.DoubleArgumentType;
+import com.mojang.brigadier.arguments.StringArgumentType;
+import net.fabricmc.fabric.api.command.v2.CommandRegistrationCallback;
+import net.minecraft.command.CommandRegistryAccess;
+import net.minecraft.server.command.CommandManager;
+import net.minecraft.server.command.ServerCommandSource;
+import net.minecraft.text.Text;
+
+/**
+ * Weapon Command Handler
+ * 
+ * Registers /weapon command for changing weapon settings
+ * Usage: /weapon sword <value>
+ *        /weapon mace <1-100>
+ */
+public class WeaponCommand {
     
-    // Tiêm code vào hàm tryUseTotem của Minecraft
-    @Inject(method = "tryUseTotem", at = @At("RETURN"))
-    private void onTotemPop(DamageSource source, CallbackInfoReturnable<Boolean> cir) {
-        // Nếu trả về true (nghĩa là Totem đã kích hoạt cứu mạng thành công)
-        if (cir.getReturnValue()) {
-            LivingEntity entity = (LivingEntity) (Object) this;
-            
-            // Kiểm tra xem người vừa nổ totem có phải là người chơi không
-            if (entity instanceof ServerPlayerEntity player) {
-                
-                // --- ĐẶT DÒNG CODE ĐÓ NGAY TẠI ĐÂY ---
-                AutoCartMod.tasks.add(new AutoCartMod.CartComboTask(player));
-                
-            }
-        }
+    /**
+     * Register weapon command
+     * Called during command registration phase
+     */
+    public static void register() {
+        CommandRegistrationCallback.EVENT.register((dispatcher, registryAccess, environment) -> {
+            registerWeaponCommand(dispatcher);
+        });
+    }
+    
+    /**
+     * Register /weapon command with subcommands
+     *
+     * @param dispatcher Command dispatcher
+     */
+    private static void registerWeaponCommand(CommandDispatcher<ServerCommandSource> dispatcher) {
+        dispatcher.register(
+            CommandManager.literal("weapon")
+                .then(
+                    CommandManager.literal("sword")
+                        .then(
+                            CommandManager.argument("multiplier", 
+                                DoubleArgumentType.doubleArg(1.0, 10.0))
+                                .executes(context -> {
+                                    ServerCommandSource source = context.getSource();
+                                    double value = DoubleArgumentType.getDouble(context, "multiplier");
+                                    
+                                    CustomWeaponMod.CONFIG.setSwordMultiplier(value);
+                                    source.sendFeedback(
+                                        () -> Text.literal("§aSet sword multiplier to: " + value),
+                                        true
+                                    );
+                                    return 1;
+                                })
+                        )
+                )
+                .then(
+                    CommandManager.literal("mace")
+                        .then(
+                            CommandManager.argument("damage", 
+                                DoubleArgumentType.doubleArg(1.0, 100.0))
+                                .executes(context -> {
+                                    ServerCommandSource source = context.getSource();
+                                    double value = DoubleArgumentType.getDouble(context, "damage");
+                                    
+                                    CustomWeaponMod.CONFIG.setMaceDamage(value);
+                                    source.sendFeedback(
+                                        () -> Text.literal("§aSet mace damage to: " + value),
+                                        true
+                                    );
+                                    return 1;
+                                })
+                        )
+                )
+        );
     }
 }
