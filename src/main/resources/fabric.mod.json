@@ -1,13 +1,10 @@
-
 {
   "schemaVersion": 1,
   "id": "customweapon",
-  "version": "${version}",
+  "version": "1.0.0",
   "name": "Custom Weapon Mod",
-  "description": "Sword passive damage boost + Mace active 2-tick slam ability with AOE impact damage",
-  "authors": [
-    "SPIRIT"
-  ],
+  "description": "Sword damage multiplier + Mace 2-tick slam ability",
+  "authors": ["SPIRIT"],
   "contact": {
     "homepage": "https://example.com",
     "sources": "https://github.com/example/customweapon",
@@ -21,9 +18,6 @@
       "com.example.customweapon.CustomWeaponMod"
     ]
   },
-  "mixins": [
-    "customweapon.mixins.json"
-  ],
   "depends": {
     "fabricloader": ">=0.15.0",
     "minecraft": "~1.21",
