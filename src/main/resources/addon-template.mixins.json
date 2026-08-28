@@ -1,15 +1,12 @@
 {
-  "schemaVersion": 1,
-  "id": "doomclient",
-  "version": "${version}",
-  "name": "DoomClient",
-  "environment": "client",
-  "entrypoints": {
-    "client": ["com.doomclient.DoomClientMod"]
-  },
-  "depends": {
-    "fabricloader": ">=0.16.0",
-    "minecraft": ">=1.21",
-    "java": ">=21"
+  "required": true,
+  "minVersion": "0.8",
+  "package": "com.example.customweapon.mixin",
+  "compatibilityLevel": "JAVA_21",
+  "mixins": [],
+  "client": [],
+  "server": [],
+  "injectors": {
+    "defaultRequire": 1
   }
 }
