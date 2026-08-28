@@ -1,8 +1,4 @@
-// src/main/java/com/example/customweapon/CustomWeaponMod.java
-// Main mod entry point and event registration
-
 package com.example.customweapon;
-
 import net.fabricmc.api.ModInitializer;
 import net.fabricmc.fabric.api.event.player.AttackEntityCallback;
 import net.fabricmc.fabric.api.event.player.PlayerTickCallback;
