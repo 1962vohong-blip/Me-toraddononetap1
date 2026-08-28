@@ -1,81 +1,37 @@
-// src/main/java/com/example/customweapon/command/WeaponCommand.java
-// Command handler for /weapon command
+// src/main/java/com/example/customweapon/mixin/PlayerDisconnectMixin.java
+// Cleanup on player disconnect
 
-package com.example.customweapon.command;
+package com.example.customweapon.mixin;
 
-import com.example.customweapon.CustomWeaponMod;
-import com.mojang.brigadier.CommandDispatcher;
-import com.mojang.brigadier.arguments.DoubleArgumentType;
-import com.mojang.brigadier.arguments.StringArgumentType;
-import net.fabricmc.fabric.api.command.v2.CommandRegistrationCallback;
-import net.minecraft.command.CommandRegistryAccess;
-import net.minecraft.server.command.CommandManager;
-import net.minecraft.server.command.ServerCommandSource;
-import net.minecraft.text.Text;
+import com.example.customweapon.KeybindManager;
+import com.example.customweapon.MaceState;
+import net.minecraft.entity.player.PlayerEntity;
+import org.spongepowered.asm.mixin.Mixin;
+import org.spongepowered.asm.mixin.injection.At;
+import org.spongepowered.asm.mixin.injection.Inject;
+import org.spongepowered.asm.mixin.callback.CallbackInfo;
 
 /**
- * Weapon Command Handler
+ * Player Disconnect Mixin
  * 
- * Registers /weapon command for changing weapon settings
- * Usage: /weapon sword <value>
- *        /weapon mace <1-100>
+ * Cleans up player data when disconnecting
+ * Prevents memory leaks from stale player references
  */
-public class WeaponCommand {
+@Mixin(PlayerEntity.class)
+public class PlayerDisconnectMixin {
     
     /**
-     * Register weapon command
-     * Called during command registration phase
+     * Called when player is removed from world
+     * Cleanup tracking data
      */
-    public static void register() {
-        CommandRegistrationCallback.EVENT.register((dispatcher, registryAccess, environment) -> {
-            registerWeaponCommand(dispatcher);
-        });
-    }
-    
-    /**
-     * Register /weapon command with subcommands
-     *
-     * @param dispatcher Command dispatcher
-     */
-    private static void registerWeaponCommand(CommandDispatcher<ServerCommandSource> dispatcher) {
-        dispatcher.register(
-            CommandManager.literal("weapon")
-                .then(
-                    CommandManager.literal("sword")
-                        .then(
-                            CommandManager.argument("multiplier", 
-                                DoubleArgumentType.doubleArg(1.0, 10.0))
-                                .executes(context -> {
-                                    ServerCommandSource source = context.getSource();
-                                    double value = DoubleArgumentType.getDouble(context, "multiplier");
-                                    
-                                    CustomWeaponMod.CONFIG.setSwordMultiplier(value);
-                                    source.sendFeedback(
-                                        () -> Text.literal("§aSet sword multiplier to: " + value),
-                                        true
-                                    );
-                                    return 1;
-                                })
-                        )
-                )
-                .then(
-                    CommandManager.literal("mace")
-                        .then(
-                            CommandManager.argument("damage", 
-                                DoubleArgumentType.doubleArg(1.0, 100.0))
-                                .executes(context -> {
-                                    ServerCommandSource source = context.getSource();
-                                    double value = DoubleArgumentType.getDouble(context, "damage");
-                                    
-                                    CustomWeaponMod.CONFIG.setMaceDamage(value);
-                                    source.sendFeedback(
-                                        () -> Text.literal("§aSet mace damage to: " + value),
-                                        true
-                                    );
-                                    return 1;
-                                })
-                        )
-                )
-        );
+    @Inject(method = "remove", at = @At("HEAD"))
+    private void onPlayerRemove(CallbackInfo info) {
+        PlayerEntity player = (PlayerEntity) (Object) this;
+        
+        // Remove from mace state tracking
+        MaceState.removePlayer(player);
+        
+        // Remove from keybind tracking
+        KeybindManager.removePlayer(player);
     }
 }
