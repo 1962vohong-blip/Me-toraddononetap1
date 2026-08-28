@@ -19,10 +19,6 @@ repositories {
 	maven { url "https://maven.architectury.dev/" }
 }
 
-loom {
-	accessWidenerPath = file("src/main/resources/customweapon.accesswidener")
-}
-
 dependencies {
 	minecraft "com.mojang:minecraft:${project.minecraft_version}"
 	mappings loom.officialMojangMappings()
