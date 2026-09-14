@@ -1,110 +1,78 @@
-// src/main/java/com/example/customweapon/KeybindManager.java
-// Handle keybind input
+package com.bot;
 
-package com.example.customweapon;
+import org.jnativehook.GlobalScreen;
+import org.jnativehook.NativeHookException;
+import org.jnativehook.keyboard.NativeKeyEvent;
+import org.jnativehook.keyboard.NativeKeyListener;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.text.Text;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.UUID;
-
-/**
- * Keybind Manager - Handles player input
- * 
- * Detects RIGHT_SHIFT (sneak) key press
- * Opens weapon configuration menu on key press
- */
-public class KeybindManager {
+public class Main implements NativeKeyListener {
+    private BotMenu menu;
+    private WTapBot wtapBot;
+    private TriggerBot triggerBot;
+    private boolean menuOpen = false;
     
-    /**
-     * Track previous frame SHIFT state per player
-     * Uses UUID to identify players
-     */
-    private static final Map<UUID, Boolean> lastShiftState = new HashMap<>();
+    public Main() {
+        try {
+            this.wtapBot = new WTapBot();
+            this.triggerBot = new TriggerBot();
+            this.menu = new BotMenu(this);
+            
+            Logger logger = Logger.getLogger(GlobalScreen.class.getPackage().getName());
+            logger.setLevel(Level.OFF);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
     
-    /**
-     * Handle player input each tick
-     * Detects SHIFT key press and opens menu
-     *
-     * @param player Player to check input for
-     */
-    public static void handleKeybind(PlayerEntity player) {
-        UUID playerId = player.getUuid();
-        
-        // Get current SHIFT state
-        boolean isShifting = player.input != null && player.input.sneak;
-        
-        // Get previous state (default false)
-        boolean wasShifting = lastShiftState.getOrDefault(playerId, false);
-        
-        // Trigger on rising edge (key pressed, wasn't pressed before)
-        if (isShifting && !wasShifting) {
-            openWeaponMenu(player);
+    public void start() {
+        try {
+            GlobalScreen.registerNativeHook();
+        } catch (NativeHookException e) {
+            System.err.println("Failed to register: " + e.getMessage());
+            System.exit(1);
         }
         
-        // Update state for next frame
-        lastShiftState.put(playerId, isShifting);
+        GlobalScreen.addNativeKeyListener(this);
+        System.out.println("Bot loaded. RIGHT_SHIFT to open menu.");
     }
     
-    /**
-     * Display weapon configuration menu to player
-     * Shows current settings and command usage
-     *
-     * @param player Player to show menu to
-     */
-    private static void openWeaponMenu(PlayerEntity player) {
-        // Get current configuration values
-        double swordMult = CustomWeaponMod.CONFIG.getSwordMultiplier();
-        double maceDmg = CustomWeaponMod.CONFIG.getMaceDamage();
-        
-        // Send menu header
-        player.sendMessage(
-            Text.literal("§6========== CUSTOM WEAPON MENU =========="),
-            false
-        );
-        
-        // Send current values
-        player.sendMessage(
-            Text.literal("§eSword Damage Multiplier: §a" + swordMult),
-            false
-        );
-        player.sendMessage(
-            Text.literal("§eMace Damage Level (1-100): §a" + maceDmg),
-            false
-        );
-        
-        // Send command usage
-        player.sendMessage(
-            Text.literal("§7"),
-            false
-        );
-        player.sendMessage(
-            Text.literal("§7§lUsage:"),
-            false
-        );
-        player.sendMessage(
-            Text.literal("§7  /weapon sword <multiplier>  (example: 2.0)"),
-            false
-        );
-        player.sendMessage(
-            Text.literal("§7  /weapon mace <damage>  (example: 75)"),
-            false
-        );
-        
-        // Send menu footer
-        player.sendMessage(
-            Text.literal("§6=========================================="),
-            false
-        );
+    @Override
+    public void nativeKeyPressed(NativeKeyEvent e) {
+        // RIGHT_SHIFT opens/closes menu
+        if (e.getKeyCode() == NativeKeyEvent.VC_SHIFT_R) {
+            menuOpen = !menuOpen;
+            if (menuOpen) {
+                menu.setVisible(true);
+            } else {
+                menu.setVisible(false);
+            }
+        }
     }
     
-    /**
-     * Remove player from tracking on disconnect
-     *
-     * @param player Disconnecting player
-     */
-    public static void removePlayer(PlayerEntity player) {
-        lastShiftState.remove(player.getUuid());
+    @Override
+    public void nativeKeyReleased(NativeKeyEvent e) {}
+    
+    @Override
+    public void nativeKeyTyped(NativeKeyEvent e) {}
+    
+    public WTapBot getWTapBot() {
+        return wtapBot;
+    }
+    
+    public TriggerBot getTriggerBot() {
+        return triggerBot;
+    }
+    
+    public static void main(String[] args) {
+        Main bot = new Main();
+        bot.start();
+        
+        try {
+            Thread.currentThread().join();
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
     }
 }
