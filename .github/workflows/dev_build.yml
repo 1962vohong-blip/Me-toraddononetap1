@@ -35,24 +35,40 @@ jobs:
       - name: Grant execute permission for gradlew
         run: chmod +x ./gradlew
 
+      # Build — in toàn bộ log ra, fail hard nếu lỗi
       - name: Build with Gradle
-        run: ./gradlew build --no-daemon --stacktrace
+        run: ./gradlew build --no-daemon --stacktrace 2>&1 | tee gradle-build.log
+        shell: bash
 
-      # Debug: xem có file gì trong build/libs không
+      # Chạy kể cả khi build fail — để biết có gì trong build/libs
       - name: List build output
         if: always()
         run: |
-          echo "=== build/libs contents ==="
-          ls -la build/libs/ || echo "build/libs does not exist"
+          echo "===== build/libs ====="
+          ls -la build/libs/ 2>/dev/null || echo "MISSING: build/libs does not exist"
+          echo "===== project root ====="
+          ls -la
 
-      # Đổi sang copy file ra folder riêng để tránh lỗi pattern exclusion
+      # Upload log để đọc nếu build fail
+      - name: Upload build log
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: build-log
+          path: gradle-build.log
+          if-no-files-found: warn
+
+      # Chỉ chạy nếu build thành công
       - name: Collect mod jar
+        if: success()
         run: |
           mkdir -p artifacts
-          cp build/libs/*.jar artifacts/
-          rm -f artifacts/*-sources.jar
+          find build/libs -name "*.jar" ! -name "*-sources.jar" -exec cp {} artifacts/ \;
+          echo "===== artifacts ====="
+          ls -la artifacts/
 
       - name: Upload mod jar
+        if: success()
         uses: actions/upload-artifact@v4
         with:
           name: spearcheat-mod
