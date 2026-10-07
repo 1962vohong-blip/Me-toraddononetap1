@@ -1,0 +1,7 @@
+repo/
+├── gradlew              ← file shell script này
+├── gradle.properties
+├── build.gradle
+├── settings.gradle
+└── gradle/wrapper/
+    └── gradle-wrapper.properties
