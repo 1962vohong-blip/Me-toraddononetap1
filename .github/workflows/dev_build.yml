@@ -35,11 +35,14 @@ jobs:
       - name: Grant execute permission for gradlew
         run: chmod +x ./gradlew
 
-      # pipefail: nếu gradle fail thì step fail luôn, không bị tee che
       - name: Build with Gradle
         run: |
           set -o pipefail
           ./gradlew build --no-daemon --stacktrace 2>&1 | tee gradle-build.log
+
+      - name: Show directory tree after build
+        if: always()
+        run: find . -name "*.jar" 2>/dev/null || echo "No jars found anywhere"
 
       - name: List build output
         if: always()
@@ -54,22 +57,15 @@ jobs:
           if-no-files-found: warn
 
       - name: Collect mod jar
-        if: always()
         run: |
           mkdir -p artifacts
-          if [ -d "build/libs" ]; then
-            find build/libs -name "*.jar" ! -name "*-sources.jar" -exec cp {} artifacts/ \;
-          else
-            echo "build/libs không tồn tại, tìm toàn project"
-            find . -path "*/build/libs/*.jar" ! -name "*-sources.jar" -exec cp {} artifacts/ \;
-          fi
-          ls -la artifacts/ || true
+          find build/libs -name "*.jar" ! -name "*-sources.jar" -exec cp {} artifacts/ \;
+          ls -la artifacts/
 
       - name: Upload mod jar
-        if: always()
         uses: actions/upload-artifact@v4
         with:
           name: spearcheat-mod
           path: artifacts/
-          if-no-files-found: warn
+          if-no-files-found: error
           retention-days: 30
