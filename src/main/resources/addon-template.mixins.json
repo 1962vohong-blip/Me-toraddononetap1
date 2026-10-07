@@ -1,11 +1,14 @@
 {
   "required": true,
   "minVersion": "0.8",
-  "package": "com.example.customweapon.mixin",
+  "package": "com.spearcheat.mixin",
   "compatibilityLevel": "JAVA_21",
-  "mixins": [],
+  "mixins": [
+    "PlayerAttackMixin",
+    "SpearChargeTrackerMixin",
+    "SpearLaunchCancelMixin"
+  ],
   "client": [],
-  "server": [],
   "injectors": {
     "defaultRequire": 1
   }
