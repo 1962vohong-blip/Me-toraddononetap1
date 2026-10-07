@@ -1,32 +1,23 @@
 plugins {
-    id 'java'
-    id 'application'
+    id 'fabric-loom' version '1.7-SNAPSHOT'
+    id 'maven-publish'
 }
 
-group = 'com.bot'
 version = '1.0.0'
-sourceCompatibility = '21'
+group = 'com.spearcheat'
 
 repositories {
-    mavenCentral()
+    maven { url 'https://maven.fabricmc.net/' }
 }
 
 dependencies {
-    implementation 'com.github.kwhat:jnativehook:2.2.2'
-    implementation 'org.slf4j:slf4j-api:2.0.9'
-    implementation 'ch.qos.logback:logback-classic:1.4.11'
+    minecraft "com.mojang:minecraft:1.21.11"
+    mappings "net.fabricmc:yarn:1.21.11+build.1:v2"
+    modImplementation "net.fabricmc:fabric-loader:0.16.9"
+    modImplementation "net.fabricmc.fabric-api:fabric-api:0.102.0+1.21.11"
 }
 
-application {
-    mainClass = 'com.bot.Main'
-}
-
-tasks.named('jar') {
-    manifest {
-        attributes(
-            'Main-Class': 'com.bot.Main',
-            'Implementation-Title': project.name,
-            'Implementation-Version': project.version
-        )
-    }
+java {
+    sourceCompatibility = JavaVersion.VERSION_21
+    targetCompatibility = JavaVersion.VERSION_21
 }
