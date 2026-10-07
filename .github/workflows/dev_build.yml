@@ -1,45 +1,55 @@
-name: Build
-on: [push, workflow_dispatch]
-jobs:
-  build:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-java@v4
-        with:
-          java-version: '21'
-          distribution: 'temurin'
-      - name: Delete old broken files
-        run: rm -rf src/main/java/com/example/
-      - name: Build
-        run: chmod +x ./gradlew && ./gradlew build --no-daemon
-      - uses: actions/upload-artifact@v4
-        with:
-          name: DoomClient
-          path: build/libs/*.jar
-name: Build
+name: Build Fabric Mod
 
 on:
   push:
-    branches: [main]
+    branches: [ main, master ]
+  pull_request:
+    branches: [ main, master ]
+  workflow_dispatch: # cho phép chạy tay trên GitHub
 
 jobs:
   build:
     runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
 
-      - uses: actions/setup-java@v4
+    steps:
+      # 1. Checkout code
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      # 2. Setup Java 21
+      - name: Set up JDK 21
+        uses: actions/setup-java@v4
         with:
           java-version: '21'
           distribution: 'temurin'
 
-      - name: Build
-        run: chmod +x ./gradlew && ./gradlew build --no-daemon
+      # 3. Cache Gradle + Loom để lần sau build nhanh hơn
+      - name: Cache Gradle packages
+        uses: actions/cache@v4
+        with:
+          path: |
+            ~/.gradle/caches
+            ~/.gradle/wrapper
+            ~/.gradle/loom-cache
+          key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle*', '**/gradle-wrapper.properties') }}
+          restore-keys: |
+            ${{ runner.os }}-gradle-
 
-      - name: Upload artifact
+      # 4. Cấp quyền gradlew
+      - name: Grant execute permission for gradlew
+        run: chmod +x ./gradlew
+
+      # 5. Build
+      - name: Build with Gradle
+        run: ./gradlew build --no-daemon
+
+      # 6. Upload .jar (bỏ sources jar)
+      - name: Upload mod jar
         uses: actions/upload-artifact@v4
         with:
-          name: spearcheat
-          path: build/libs/spearcheat-*.jar
+          name: spearcheat-mod
+          path: |
+            build/libs/*.jar
+            !build/libs/*-sources.jar
           if-no-files-found: error
+          retention-days: 30
